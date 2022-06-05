@@ -12,6 +12,9 @@ import numpy as np
 import os
 import argparse
 # from timm.scheduler import create_scheduler
+from mail import send_mail #@@@
+import time
+from datetime import timedelta
 
 from config import cfg
 from timm.data import Mixup
@@ -25,7 +28,7 @@ def set_seed(seed):
     torch.backends.cudnn.benchmark = True
 
 if __name__ == '__main__':
-
+    start_time = round(time.monotonic()) # * 加上round就不会一长串小数了
     parser = argparse.ArgumentParser(description="ReID Baseline Training")
     parser.add_argument(
         "--config_file", default="", help="path to config file", type=str
@@ -127,5 +130,7 @@ if __name__ == '__main__':
             num_query, args.local_rank
         )
 
+    end_time = round(time.monotonic()) #!
+    send_mail(subject='CDTrans done!', content='{}<br/><br/>Running Time: {} <br/><br/>==========<br/><br/>Args:{} <br/><br/>=========='.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), timedelta(seconds=end_time - start_time), args))
     
     
